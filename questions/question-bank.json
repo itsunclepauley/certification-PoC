@@ -145,6 +145,18 @@
       ],
       "category": "Data Management",
       "difficulty": "hard"
+    },
+{
+      "id": 13,
+      "question": "Your question goes here?",
+      "correctAnswer": "The correct answer",
+      "wrongAnswers": [
+        "Wrong answer option 1",
+        "Wrong answer option 2", 
+        "Wrong answer option 3"
+      ],
+      "category": "Category Name",
+      "difficulty": "easy"
     }
   ]
 }
