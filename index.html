@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Tool Certification</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { Shuffle, CheckCircle, XCircle, RotateCcw, Award, AlertCircle } = lucide;
+
+        const CertificationExam = () => {
+            const [questionBank, setQuestionBank] = useState([]);
+            const [examQuestions, setExamQuestions] = useState([]);
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [userAnswers, setUserAnswers] = useState({});
+            const [showResults, setShowResults] = useState(false);
+            const [examStarted, setExamStarted] = useState(false);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+
+            // Load questions from GitHub
+            useEffect(() => {
+                const loadQuestions = async () => {
+                    try {
+                        const response = await fetch('./questions/question-bank.json');
+                        if (!response.ok) {
+                            throw new Error('Failed to load questions');
+                        }
+                        const data = await response.json();
+                        setQuestionBank(data.questions || []);
+                        setLoading(false);
+                    } catch (err) {
+                        setError('Could not load questions. Please try again later.');
+                        setLoading(false);
+                    }
+                };
+                loadQuestions();
+            }, []);
+
+            // Generate random exam questions
+            const generateExam = () => {
+                if (questionBank.length < 10) {
+                    setError('Not enough questions in the bank. Need at least 10 questions.');
+                    return;
+                }
+
+                const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, Math.min(10, questionBank.length));
+                
+                const questionsWithChoices = selected.map(q => {
+                    const correctAnswer = q.correctAnswer;
+                    const wrongAnswers = q.wrongAnswers || [];
+                    
+                    // Combine and shuffle all choices
+                    const allChoices = [correctAnswer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+                    
+                    return {
+                        question: q.question,
+                        choices: allChoices,
+                        correctAnswer: correctAnswer,
+                        category: q.category,
+                        difficulty: q.difficulty,
+                        id: q.id
+                    };
+                });
+                
+                setExamQuestions(questionsWithChoices);
+                setCurrentQuestion(0);
+                setUserAnswers({});
+                setShowResults(false);
+                setExamStarted(true);
+            };
+
+            const handleAnswer = (answer) => {
+                setUserAnswers(prev => ({
+                    ...prev,
+                    [currentQuestion]: answer
+                }));
+            };
+
+            const nextQuestion = () => {
+                if (currentQuestion < examQuestions.length - 1) {
+                    setCurrentQuestion(prev => prev + 1);
+                }
+            };
+
+            const prevQuestion = () => {
+                if (currentQuestion > 0) {
+                    setCurrentQuestion(prev => prev - 1);
+                }
+            };
+
+            const submitExam = () => {
+                setShowResults(true);
+            };
+
+            const resetExam = () => {
+                setExamStarted(false);
+                setExamQuestions([]);
+                setCurrentQuestion(0);
+                setUserAnswers({});
+                setShowResults(false);
+            };
+
+            const calculateScore = () => {
+                let correct = 0;
+                examQuestions.forEach((q, index) => {
+                    if (userAnswers[index] === q.correctAnswer) {
+                        correct++;
+                    }
+                });
+                return { correct, total: examQuestions.length, percentage: Math.round((correct / examQuestions.length) * 100) };
+            };
+
+            if (loading) {
+                return (
+                    <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                            <p className="text-gray-600">Loading questions...</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (error) {
+                return (
+                    <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen flex items-center justify-center">
+                        <div className="text-center">
+                            <AlertCircle className="mx-auto mb-4 text-red-600" size={64} />
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4">Error Loading Exam</h2>
+                            <p className="text-gray-600 mb-4">{error}</p>
+                            <button 
+                                onClick={() => window.location.reload()} 
+                                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                            >
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (!examStarted) {
+                return (
+                    <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen">
+                        <div className="text-center">
+                            <Award className="mx-auto mb-4 text-blue-600" size={64} />
+                            <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                                Internal Tool Certification
+                            </h1>
+                            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                                Test your knowledge of our internal tools and processes. 
+                                Each exam randomly selects questions from our comprehensive question bank.
+                            </p>
+                            <div className="bg-blue-50 p-4 rounded-lg mb-6 max-w-md mx-auto">
+                                <h3 className="font-semibold text-blue-800 mb-2">Exam Details:</h3>
+                                <ul className="text-blue-700 text-sm space-y-1">
+                                    <li>• Question Bank: {questionBank.length} questions</li>
+                                    <li>• Questions per Exam: {Math.min(10, questionBank.length)}</li>
+                                    <li>• Answer Format: Multiple Choice</li>
+                                    <li>• Passing Score: 70%</li>
+                                </ul>
+                            </div>
+                            <button
+                                onClick={generateExam}
+                                disabled={questionBank.length === 0}
+                                className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto font-semibold disabled:opacity-50"
+                            >
+                                <Shuffle size={20} />
+                                Start Random Exam
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (showResults) {
+                const score = calculateScore();
+                const passed = score.percentage >= 70;
+
+                return (
+                    <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen">
+                        <div className="text-center mb-8">
+                            {passed ? (
+                                <CheckCircle className="mx-auto mb-4 text-green-600" size={64} />
+                            ) : (
+                                <XCircle className="mx-auto mb-4 text-red-600" size={64} />
+                            )}
+                            <h2 className="text-3xl font-bold mb-4">
+                                {passed ? 'Congratulations! You Passed!' : 'Exam Not Passed'}
+                            </h2>
+                            <div className="text-6xl font-bold mb-4" style={{color: passed ? '#16a34a' : '#dc2626'}}>
+                                {score.percentage}%
+                            </div>
+                            <p className="text-gray-600 mb-6">
+                                You answered {score.correct} out of {score.total} questions correctly.
+                                {passed ? ' You have earned your certification!' : ' You need 70% to pass.'}
+                            </p>
+                        </div>
+
+                        <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                            <h3 className="text-xl font-semibold mb-4">Review Your Answers:</h3>
+                            <div className="space-y-4">
+                                {examQuestions.map((q, index) => {
+                                    const userAnswer = userAnswers[index];
+                                    const isCorrect = userAnswer === q.correctAnswer;
+                                    
+                                    return (
+                                        <div key={index} className="border-l-4 pl-4" style={{borderColor: isCorrect ? '#16a34a' : '#dc2626'}}>
+                                            <div className="flex items-start gap-2">
+                                                {isCorrect ? (
+                                                    <CheckCircle className="text-green-600 mt-1" size={20} />
+                                                ) : (
+                                                    <XCircle className="text-red-600 mt-1" size={20} />
+                                                )}
+                                                <div className="flex-1">
+                                                    <p className="font-medium">{q.question}</p>
+                                                    <p className="text-sm text-gray-600">Your answer: {userAnswer || 'No answer'}</p>
+                                                    {!isCorrect && <p className="text-sm text-green-600">Correct answer: {q.correctAnswer}</p>}
+                                                    {q.category && <span className="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded mt-1">{q.category}</span>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="text-center">
+                            <button
+                                onClick={resetExam}
+                                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto"
+                            >
+                                <RotateCcw size={20} />
+                                Take Another Exam
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const currentQ = examQuestions[currentQuestion];
+            const allAnswered = Object.keys(userAnswers).length === examQuestions.length;
+
+            return (
+                <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen">
+                    {/* Progress Bar */}
+                    <div className="mb-6">
+                        <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-medium text-gray-600">
+                                Question {currentQuestion + 1} of {examQuestions.length}
+                            </span>
+                            <span className="text-sm text-gray-500">
+                                {Object.keys(userAnswers).length}/{examQuestions.length} answered
+                            </span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${((currentQuestion + 1) / examQuestions.length) * 100}%` }}
+                            ></div>
+                        </div>
+                    </div>
+
+                    {/* Question */}
+                    <div className="bg-white border-2 border-gray-200 rounded-lg p-8 mb-6">
+                        <div className="flex justify-between items-start mb-4">
+                            <h2 className="text-2xl font-semibold text-gray-800 flex-1">
+                                {currentQ.question}
+                            </h2>
+                            {currentQ.category && (
+                                <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full ml-4">
+                                    {currentQ.category}
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="space-y-3">
+                            {currentQ.choices.map((choice, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleAnswer(choice)}
+                                    className={`w-full p-4 text-left border-2 rounded-lg transition-all duration-200 ${
+                                        userAnswers[currentQuestion] === choice
+                                            ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                            : 'border-gray-200 hover:border-gray-300 bg-white'
+                                    }`}
+                                >
+                                    <span className="font-medium mr-3 text-gray-500">
+                                        {String.fromCharCode(65 + index)}.
+                                    </span>
+                                    {choice}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Navigation */}
+                    <div className="flex justify-between items-center">
+                        <button
+                            onClick={prevQuestion}
+                            disabled={currentQuestion === 0}
+                            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Previous
+                        </button>
+
+                        <div className="flex gap-2">
+                            {examQuestions.map((_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentQuestion(index)}
+                                    className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
+                                        index === currentQuestion
+                                            ? 'bg-blue-600 text-white'
+                                            : userAnswers[index]
+                                            ? 'bg-green-100 text-green-700 border-2 border-green-300'
+                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+                        </div>
+
+                        {currentQuestion === examQuestions.length - 1 ? (
+                            <button
+                                onClick={submitExam}
+                                disabled={!allAnswered}
+                                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                            >
+                                Submit Exam
+                            </button>
+                        ) : (
+                            <button
+                                onClick={nextQuestion}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            >
+                                Next
+                            </button>
+                        )}
+                    </div>
+
+                    {!allAnswered && (
+                        <p className="text-center text-amber-600 mt-4 text-sm">
+                            Please answer all questions before submitting the exam.
+                        </p>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<CertificationExam />, document.getElementById('root'));
+    </script>
+</body>
+</html>
