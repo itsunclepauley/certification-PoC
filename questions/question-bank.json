@@ -1,0 +1,150 @@
+{
+  "category": "Internal Tool Certification",
+  "lastUpdated": "2025-06-04",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the primary purpose of the user dashboard?",
+      "correctAnswer": "Display personalized metrics and quick actions",
+      "wrongAnswers": [
+        "Manage system-wide settings",
+        "Generate monthly reports",
+        "Configure user permissions"
+      ],
+      "category": "Dashboard",
+      "difficulty": "easy"
+    },
+    {
+      "id": 2,
+      "question": "How do you export data from the reporting module?",
+      "correctAnswer": "Click the Export button and select your preferred format",
+      "wrongAnswers": [
+        "Use the File menu and select Save As",
+        "Right-click on the data table and choose Export",
+        "Press Ctrl+E to open the export dialog"
+      ],
+      "category": "Reporting",
+      "difficulty": "medium"
+    },
+    {
+      "id": 3,
+      "question": "What happens when you archive a project?",
+      "correctAnswer": "Project becomes read-only but remains accessible",
+      "wrongAnswers": [
+        "Project is permanently deleted",
+        "Project is hidden from all users",
+        "Project data is compressed and encrypted"
+      ],
+      "category": "Project Management",
+      "difficulty": "medium"
+    },
+    {
+      "id": 4,
+      "question": "Which user role has permission to delete company-wide data?",
+      "correctAnswer": "System Administrator only",
+      "wrongAnswers": [
+        "Project Manager and above",
+        "Any user with write permissions",
+        "Department Head and above"
+      ],
+      "category": "Permissions",
+      "difficulty": "hard"
+    },
+    {
+      "id": 5,
+      "question": "How often does the system automatically backup user data?",
+      "correctAnswer": "Every 24 hours",
+      "wrongAnswers": [
+        "Every 6 hours",
+        "Weekly on Sundays",
+        "Only when manually triggered"
+      ],
+      "category": "System",
+      "difficulty": "easy"
+    },
+    {
+      "id": 6,
+      "question": "What is the maximum file size for document uploads?",
+      "correctAnswer": "25 MB per file",
+      "wrongAnswers": [
+        "10 MB per file",
+        "50 MB per file",
+        "100 MB per file"
+      ],
+      "category": "File Management",
+      "difficulty": "easy"
+    },
+    {
+      "id": 7,
+      "question": "Which integration allows direct calendar synchronization?",
+      "correctAnswer": "Microsoft Outlook and Google Calendar",
+      "wrongAnswers": [
+        "Only Microsoft Outlook",
+        "Only Google Calendar",
+        "Apple Calendar and Outlook"
+      ],
+      "category": "Integrations",
+      "difficulty": "medium"
+    },
+    {
+      "id": 8,
+      "question": "How do you share a report with external stakeholders?",
+      "correctAnswer": "Generate a public link with expiration date",
+      "wrongAnswers": [
+        "Add them as guest users to the system",
+        "Export and email the file manually",
+        "Use the built-in messaging system"
+      ],
+      "category": "Reporting",
+      "difficulty": "hard"
+    },
+    {
+      "id": 9,
+      "question": "What notification settings can users customize?",
+      "correctAnswer": "Email frequency, push notifications, and alert types",
+      "wrongAnswers": [
+        "Only email frequency",
+        "Only push notification timing",
+        "Only alert sound preferences"
+      ],
+      "category": "User Settings",
+      "difficulty": "medium"
+    },
+    {
+      "id": 10,
+      "question": "Where can you find the system status and uptime information?",
+      "correctAnswer": "Help menu → System Status",
+      "wrongAnswers": [
+        "Dashboard → System Overview",
+        "Settings → About",
+        "Reports → System Analytics"
+      ],
+      "category": "System",
+      "difficulty": "easy"
+    },
+    {
+      "id": 11,
+      "question": "What is the correct way to escalate a support ticket?",
+      "correctAnswer": "Change priority to High and add manager to CC",
+      "wrongAnswers": [
+        "Create a new ticket and reference the old one",
+        "Forward the ticket email to your manager",
+        "Call the support hotline directly"
+      ],
+      "category": "Support",
+      "difficulty": "medium"
+    },
+    {
+      "id": 12,
+      "question": "How long are deleted items retained in the system?",
+      "correctAnswer": "30 days in the recycle bin",
+      "wrongAnswers": [
+        "7 days in the recycle bin",
+        "90 days in the recycle bin",
+        "Items are permanently deleted immediately"
+      ],
+      "category": "Data Management",
+      "difficulty": "hard"
+    }
+  ]
+}
