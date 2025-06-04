@@ -7,7 +7,6 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; }
@@ -18,7 +17,50 @@
 
     <script type="text/babel">
         const { useState, useEffect } = React;
-        const { Shuffle, CheckCircle, XCircle, RotateCcw, Award, AlertCircle } = window.lucide;
+
+        // Simple icon components
+        const ShuffleIcon = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+            </svg>
+        );
+
+        const CheckIcon = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <path d="m9 11 3 3L22 4"/>
+            </svg>
+        );
+
+        const XIcon = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m15 9-6 6M9 9l6 6"/>
+            </svg>
+        );
+
+        const RotateIcon = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                <path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                <path d="M8 16H3v5"/>
+            </svg>
+        );
+
+        const AwardIcon = () => (
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="m9 12 2 2 4-4"/>
+                <path d="M8 21V12M16 21V12"/>
+            </svg>
+        );
+
+        const AlertIcon = () => (
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m9 9 3 3M12 17h.01"/>
+            </svg>
+        );
 
         const CertificationExam = () => {
             const [questionBank, setQuestionBank] = useState([]);
@@ -139,7 +181,9 @@
                 return (
                     <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen flex items-center justify-center">
                         <div className="text-center">
-                            <AlertCircle className="mx-auto mb-4 text-red-600" size={64} />
+                            <div className="mx-auto mb-4 text-red-600">
+                                <AlertIcon />
+                            </div>
                             <h2 className="text-2xl font-bold text-gray-800 mb-4">Error Loading Exam</h2>
                             <p className="text-gray-600 mb-4">{error}</p>
                             <button 
@@ -157,7 +201,9 @@
                 return (
                     <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen">
                         <div className="text-center">
-                            <Award className="mx-auto mb-4 text-blue-600" size={64} />
+                            <div className="mx-auto mb-4 text-blue-600">
+                                <AwardIcon />
+                            </div>
                             <h1 className="text-3xl font-bold text-gray-800 mb-4">
                                 Internal Tool Certification
                             </h1>
@@ -179,7 +225,7 @@
                                 disabled={questionBank.length === 0}
                                 className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto font-semibold disabled:opacity-50"
                             >
-                                <Shuffle size={20} />
+                                <ShuffleIcon />
                                 Start Random Exam
                             </button>
                         </div>
@@ -194,11 +240,22 @@
                 return (
                     <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen">
                         <div className="text-center mb-8">
-                            {passed ? (
-                                <CheckCircle className="mx-auto mb-4 text-green-600" size={64} />
-                            ) : (
-                                <XCircle className="mx-auto mb-4 text-red-600" size={64} />
-                            )}
+                            <div className={`mx-auto mb-4 ${passed ? 'text-green-600' : 'text-red-600'}`}>
+                                {passed ? <CheckIcon /> : <XIcon />}
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mx-auto">
+                                    {passed ? (
+                                        <>
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                            <path d="m9 11 3 3L22 4"/>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <path d="m15 9-6 6M9 9l6 6"/>
+                                        </>
+                                    )}
+                                </svg>
+                            </div>
                             <h2 className="text-3xl font-bold mb-4">
                                 {passed ? 'Congratulations! You Passed!' : 'Exam Not Passed'}
                             </h2>
@@ -221,11 +278,21 @@
                                     return (
                                         <div key={index} className="border-l-4 pl-4" style={{borderColor: isCorrect ? '#16a34a' : '#dc2626'}}>
                                             <div className="flex items-start gap-2">
-                                                {isCorrect ? (
-                                                    <CheckCircle className="text-green-600 mt-1" size={20} />
-                                                ) : (
-                                                    <XCircle className="text-red-600 mt-1" size={20} />
-                                                )}
+                                                <div className={`mt-1 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        {isCorrect ? (
+                                                            <>
+                                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                                                <path d="m9 11 3 3L22 4"/>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <circle cx="12" cy="12" r="10"/>
+                                                                <path d="m15 9-6 6M9 9l6 6"/>
+                                                            </>
+                                                        )}
+                                                    </svg>
+                                                </div>
                                                 <div className="flex-1">
                                                     <p className="font-medium">{q.question}</p>
                                                     <p className="text-sm text-gray-600">Your answer: {userAnswer || 'No answer'}</p>
@@ -244,7 +311,7 @@
                                 onClick={resetExam}
                                 className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto"
                             >
-                                <RotateCcw size={20} />
+                                <RotateIcon />
                                 Take Another Exam
                             </button>
                         </div>
